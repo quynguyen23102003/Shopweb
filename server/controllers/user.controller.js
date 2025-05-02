@@ -9,6 +9,7 @@ import generatedOtp from '../utils/generatedOtp.js'
 import forgotPasswordTemplate from '../utils/forgotPasswordTemplate.js'
 import jwt from 'jsonwebtoken'
 
+// register controller
 export async function registerUserController(request, response) {
     try {
         const { email, name, password } = request.body
@@ -70,6 +71,7 @@ export async function registerUserController(request, response) {
     }
 }
 
+// verifyEmail controller
 export async function verifyEmailController(request, response) {
     try {
         const { code } = request.body
@@ -147,6 +149,10 @@ export async function loginController(request, response) {
         const accessToken = await generatedAccessToken(user._id)
         const refreshToken = await generatedRefreshToken(user._id)
 
+        const updateUser = await UserModel.findByIdAndUpdate(user?._id, {
+            last_login_date : new Date()
+        })
+
         const cookiesOption = {
             http: true,
             secure: true,
@@ -160,7 +166,7 @@ export async function loginController(request, response) {
             message: "Login successfully",
             error: false,
             success: true,
-            date: {
+            data: {
                 accessToken,
                 refreshToken
             }
@@ -220,6 +226,8 @@ export async function uploadAvatar(request, response) {
 
         return response.json({
             message: "upload profile",
+            success: true,
+            error: false,
             data: {
                 _id: userId,
                 avatar: upload.url
@@ -255,7 +263,7 @@ export async function updateUserDetails(request, response) {
         })
 
         return response.json({
-            message: "update user successfully",
+            message: "Update successfully",
             error: false,
             success: true,
             data: updateUser
@@ -324,15 +332,15 @@ export async function verifyForgotPasswordOpt(request, response) {
 
         if (!email || !otp) {
             return response.status(400).json({
-                message : "Provide required field email, otp",
-                error : true,
-                success : false
+                message: "Provide required field email, otp",
+                error: true,
+                success: false
             })
         }
 
         const user = await UserModel.findOne({ email })
 
-        if ( !user ) {
+        if (!user) {
             return response.status(400).json({
                 message: "Email not available",
                 error: true,
@@ -344,24 +352,32 @@ export async function verifyForgotPasswordOpt(request, response) {
 
         if (user.fogot_password_expiry < currentTime) {
             return response.status(400).json({
-                message : "Otp is expired",
-                error : true,
-                success : false
+                message: "Otp is expired",
+                error: true,
+                success: false
             })
         }
 
         if (otp !== user.forgot_password_otp) {
             return response.status(400).json({
-                message : "Invalid otp",
-                error : true,
-                success : false
+                message: "Invalid otp",
+                error: true,
+                success: false
             })
         }
 
+        // if otp is not expired
+        // otp === user.forgot_password_opt
+
+        const updateUser = await UserModel.findByIdAndUpdate(user?._id, {
+            forgot_password_otp : "",
+            fogot_password_expiry : ""
+        })
+
         return response.json({
-            message : "Verify otp successfully",
-            error : false,
-            success : true
+            message: "Verify otp successfully",
+            error: false,
+            success: true
         })
 
     } catch (error) {
@@ -371,36 +387,36 @@ export async function verifyForgotPasswordOpt(request, response) {
             success: false
         })
     }
-} 
+}
 
 // reset password 
 export async function resetpassword(request, response) {
     try {
         const { email, newPassword, confirmPassword } = request.body
 
-        if (!email || !newPassword || !confirmPassword ) {
+        if (!email || !newPassword || !confirmPassword) {
             return response.status(400).json({
-                message : "Provide required fields email, newPassword, confirmPassword",
-                error : true,
-                success : false
+                message: "Provide required fields email, newPassword, confirmPassword",
+                error: true,
+                success: false
             })
         }
 
-        const user = await UserModel.findOne({email})
+        const user = await UserModel.findOne({ email })
 
         if (!user) {
             return response.status(400).json({
-                message : "Email is not available",
-                error : true,
-                success : false
+                message: "Email is not available",
+                error: true,
+                success: false
             })
         }
 
         if (newPassword !== confirmPassword) {
             return response.status(400).json({
-                message : "newPassword and confirmPassword not same.",
-                error : true,
-                success : false
+                message: "newPassword and confirmPassword not same.",
+                error: true,
+                success: false
             })
         }
 
@@ -408,20 +424,20 @@ export async function resetpassword(request, response) {
         const hashPassword = await bcryptjs.hash(newPassword, salt)
 
         const update = await UserModel.findOneAndUpdate(user._id, {
-            password : hashPassword
+            password: hashPassword
         })
 
         return response.json({
-            message : "Password updated successfully",
-            error : false,
-            success : true
+            message: "Password updated successfully",
+            error: false,
+            success: true
         })
 
     } catch (error) {
         return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
+            message: error.message || error,
+            error: true,
+            success: false
         })
     }
 }
@@ -429,23 +445,23 @@ export async function resetpassword(request, response) {
 // refresh token controller
 export async function reftreshToken(request, response) {
     try {
-        const refreshToken = request.cookies?.refreshToken || request.header?.authorization?.split(" ")[1];
+        const refreshToken = request.cookies?.refreshToken || request.headers?.authorization?.split(" ")[1];
 
-        if(!refreshToken) {
+        if (!refreshToken) {
             return response.status(401).json({
-                message : "Invalid token",
-                error : true,
-                success : false
+                message: "Invalid token",
+                error: true,
+                success: false
             })
         }
 
-        const verifyToken = await jwt.verify(refreshToken , process.env.SECRET_KEY_REFRESH_TOKEN)
+        const verifyToken = await jwt.verify(refreshToken, process.env.SECRET_KEY_REFRESH_TOKEN)
 
         if (!verifyToken) {
             return response.status(401).json({
-                message : "token is expired",
-                error : true,
-                success : false
+                message: "token is expired",
+                error: true,
+                success: false
             })
         }
 
@@ -454,27 +470,49 @@ export async function reftreshToken(request, response) {
         const newAccessToken = await generatedAccessToken(userId)
 
         const cookiesOption = {
-            httpOnly : true,
-            secure : true,
-            sameSite : "None"
+            httpOnly: true,
+            secure: true,
+            sameSite: "None"
         }
 
         response.cookie('accessToken', newAccessToken, cookiesOption)
 
         return response.json({
-            message : "New Access token generated",
-            error : false,
-            success : true,
-            data : {
-                accessToken : newAccessToken
+            message: "New Access token generated",
+            error: false,
+            success: true,
+            data: {
+                accessToken: newAccessToken
             }
         })
 
     } catch (error) {
         return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+// get login user detail
+export async function userDetails(request, response) {
+    try {
+        const userId = request.userId
+
+        const user = await UserModel.findById(userId).select('-password -refresh_token')
+
+        return response.json({
+            message: 'user details',
+            data: user,
+            error: false,
+            success: true
+        })
+    } catch (error) {
+        response.status(500).json({
+            message: "Something is wrong",
+            error: true,
+            success: false
         })
     }
 }

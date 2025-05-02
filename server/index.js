@@ -7,10 +7,12 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import connectDB from './config/connectDB.js'
 import userRouter from './routes/user.route.js'
+import categoryRouter from './routes/category.route.js'
+import uploadRouter from './routes/upload.route.js'
 
 const app = express()
 app.use(cors({
-    credential: true,
+    credentials: true,
     origin: process.env.FRONTEND_URL
 }))
 app.use(express.json())
@@ -30,6 +32,8 @@ const PORT = 3000 || process.env.PORT
     })
 
     app.use('/api/user', userRouter)
+    app.use('/api/category', categoryRouter)
+    app.use('/api/file', uploadRouter)
 
     connectDB().then(() => {
         app.listen(PORT, () => {
