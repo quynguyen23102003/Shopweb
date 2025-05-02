@@ -41,6 +41,7 @@ const SummaryApi = {
         url : '/api/user/update-user',
         method : 'put'
     },
+    // category
     addCategory : {
         url : '/api/category/add-category',
         method : 'post'

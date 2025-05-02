@@ -30,7 +30,7 @@ const UploadCategoryModel = ({ close, fetchData }) => {
         try {
             setLoading(true)
             const response = await Axios({
-                ...SummaryApi.updateCategory,
+                ...SummaryApi.addCategory,
                 data: data
             })
             const { data: responseData } = response
