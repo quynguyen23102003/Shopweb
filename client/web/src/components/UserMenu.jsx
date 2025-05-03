@@ -8,6 +8,7 @@ import { logout } from '../store/userSlice'
 import toast from 'react-hot-toast'
 import AxiosToastError from '../utils/AxiosToastError'
 import { HiOutlineExternalLink } from "react-icons/hi";
+import isAdmin from '../utils/isAdmin'
 
 const UserMenu = ({ close }) => {
     const user = useSelector((state) => state.user)
@@ -43,19 +44,72 @@ const UserMenu = ({ close }) => {
         <div>
             <div className='font-semibold'>My Account</div>
             <div className='text-sm flex items-center gap-2'>
-                <span className='max-w-52 text-ellipsis line-clamp-1'>{user.name || user.mobile}</span>
+                <span className='max-w-52 text-ellipsis line-clamp-1'>{user.name || user.mobile} <span className='text-sm text-red-600'>{user.role === "ADMIN" ? "(Admin)" : ""}</span></span>
                 <Link onClick={handleClose} to={"/dashboard/profile"} className='hover:text-[#ffbf00]'>
-                    <HiOutlineExternalLink size={15}/>
+                    <HiOutlineExternalLink size={15} />
                 </Link>
             </div>
 
             <Divider />
 
             <div className='text-sm grid gap-1'>
-                <Link onClick={handleClose} to={"/dashboard/category"} className='px-2 hover:bg-orange-200 py-1'>Category</Link>
-                <Link onClick={handleClose} to={"/dashboard/sub-category"} className='px-2 hover:bg-orange-200 py-1'>Sub Category</Link>
-                <Link onClick={handleClose} to={"/dashboard/upload-product"} className='px-2 hover:bg-orange-200 py-1'>Upload Product</Link>
-                <Link onClick={handleClose} to={"/dashboard/product"} className='px-2 hover:bg-orange-200 py-1'>Product</Link>
+
+                {/* Cách 1 */}
+
+                {
+                    isAdmin(user.role) && (
+                        <Link onClick={handleClose} to={"/dashboard/category"} className='px-2 hover:bg-orange-200 py-1'>Category</Link>
+                    )
+                }
+                {
+                    isAdmin(user.role) && (
+                        <Link onClick={handleClose} to={"/dashboard/sub-category"} className='px-2 hover:bg-orange-200 py-1'>Sub Category</Link>
+                    )
+                }
+                {
+                    isAdmin(user.role) && (
+                        <Link onClick={handleClose} to={"/dashboard/upload-product"} className='px-2 hover:bg-orange-200 py-1'>Upload Product</Link>
+                    )
+                }
+                {
+                    isAdmin(user.role) && (
+                        <Link onClick={handleClose} to={"/dashboard/product"} className='px-2 hover:bg-orange-200 py-1'>Product</Link>
+                    )
+                }
+
+                {/* Cách 2 */}
+                {/* {
+                    isAdmin(user.role) && (
+                        <>
+                        <Link onClick={handleClose} to={"/dashboard/category"} className='px-2 hover:bg-orange-200 py-1'>Category</Link>
+                        <Link onClick={handleClose} to={"/dashboard/sub-category"} className='px-2 hover:bg-orange-200 py-1'>Sub Category</Link>
+                        <Link onClick={handleClose} to={"/dashboard/upload-product"} className='px-2 hover:bg-orange-200 py-1'>Upload Product</Link>
+                        <Link onClick={handleClose} to={"/dashboard/product"} className='px-2 hover:bg-orange-200 py-1'>Product</Link>
+                        </>
+                    )
+                } */}
+
+                {/* Cách 3 */}
+
+                {/* {isAdmin(user.role) && (
+                    <>
+                        {[
+                            { to: "/dashboard/category", label: "Category" },
+                            { to: "/dashboard/sub-category", label: "Sub Category" },
+                            { to: "/dashboard/upload-product", label: "Upload Product" },
+                            { to: "/dashboard/product", label: "Product" },
+                        ].map((item) => (
+                            <Link
+                                key={item.to}
+                                onClick={handleClose}
+                                to={item.to}
+                                className="px-2 hover:bg-orange-200 py-1"
+                            >
+                                {item.label}
+                            </Link>
+                        ))}
+                    </>
+                )} */}
                 <Link onClick={handleClose} to={"/dashboard/myorders"} className='px-2 hover:bg-orange-200 py-1'>My Oders</Link>
                 <Link onClick={handleClose} to={"/dashboard/address"} className='px-2 hover:bg-orange-200 py-1'>Save Address</Link>
                 <button onClick={handleLogout} className='text-left px-2 hover:bg-orange-200 py-1'>Log Out</button>
