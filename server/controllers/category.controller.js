@@ -74,7 +74,7 @@ export const updateCategoryController = async (request, response) => {
         })
 
         return response.json({
-            message : "Update Category",
+            message : " Update Category Successfully",
             error : false,
             success : true,
             data : update

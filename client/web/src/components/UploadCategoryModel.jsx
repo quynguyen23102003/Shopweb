@@ -6,7 +6,8 @@ import Axios from '../utils/Axios';
 import toast from 'react-hot-toast';
 import AxiosToastError from '../utils/AxiosToastError';
 
-const UploadCategoryModel = ({ close, fetchData }) => {
+// const UploadCategoryModel = ({ close, fetchData }) => {
+const UploadCategoryModel = ({ close }) => {
     const [data, setData] = useState({
         name: "",
         image: ""
@@ -38,7 +39,7 @@ const UploadCategoryModel = ({ close, fetchData }) => {
             if (responseData.success) {
                 toast.success(responseData.message)
                 close()
-                fetchData()
+                // fetchData()
             }
         } catch (error) {
             AxiosToastError()
@@ -91,7 +92,7 @@ const UploadCategoryModel = ({ close, fetchData }) => {
                     <div className='grid gap-1'>
                         <p>Image</p>
                         <div className='flex gap-4 flex-col lg:flex-row items-center'>
-                            <div className='border bg-blue-50 h-36 w-full lg:w-36 flex items-center justify-center'>
+                            <div className='border bg-blue-50 border-blue-100 h-36 w-full lg:w-36 flex items-center justify-center'>
                                 {
                                     data.image ? (
                                         <img src={data.image} alt="category" className='w-full h-full object-scale-down' />
@@ -104,21 +105,21 @@ const UploadCategoryModel = ({ close, fetchData }) => {
                                 <div className={`
                                 ${!data.name ? 'bg-gray-300 border-gray-300' : 'border-[#ffbf00] hover:bg-[#ffc929]'}
                                 px-4 py-2 rounded cursor-pointer border font-medium
-                            `}>
+                                `}>
                                     {
                                         loading ? "Loading..." : "Upload Image"
                                     }
                                 </div>
-                                <input disabled={!data.name} onChange={handleUploadCategoryImage} type="file" id='uploadCategoryImage'
-                                    className='hidden' />
+                                <input disabled={!data.name} onChange={handleUploadCategoryImage} type="file" id='uploadCategoryImage' className='hidden' />
                             </label>
                         </div>
                     </div>
 
                     <button className={`
                     ${data.name && data.image ? "bg-[#ffbf00] hover:bg-[#ffc929]" : "bg-gray-300"}
-                    py-2 font-semibold `}
-                    >Add Category
+                    py-2 font-semibold 
+                    `}>
+                        Add Category
                     </button>
                 </form>
             </div>
