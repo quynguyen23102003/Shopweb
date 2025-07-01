@@ -17,11 +17,14 @@ import UploadProduct from "../pages/UploadProduct";
 import CategoryPage from "../pages/CategoryPage";
 import SubCategoryPage from "../pages/SubCategoryPage";
 import AdminPermission from "../layouts/AdminPermission";
+import Product from "../pages/Product";
+import ProductListPage from "../pages/ProductListPage";
+import ProductDisplayPage from "../pages/ProductDisplayPage";
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <App />,
+        element: <App/>,
         children : [
             {
                 path : "",
@@ -88,6 +91,19 @@ const router = createBrowserRouter([
                         element : <AdminPermission><ProductAdmin/></AdminPermission>
                     },
                 ]
+            },
+            {
+                path : ":category",
+                children : [
+                    {
+                        path : ":subCategory",
+                        element : <ProductListPage/>
+                    }
+                ]
+            },
+            {
+                path: "product/:product",
+                element : <ProductDisplayPage/>
             }
         ]
     },

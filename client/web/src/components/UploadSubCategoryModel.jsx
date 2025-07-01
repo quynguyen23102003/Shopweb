@@ -7,13 +7,15 @@ import Axios from '../utils/Axios';
 import SummaryApi from '../common/SunmaryApi';
 import toast from 'react-hot-toast';
 
-const UploadSubCategoryModel = ({ close, fetchData }) => {
+// const UploadSubCategoryModel = ({ close, fetchData }) => {
+  const UploadSubCategoryModel = ({ close }) => {
   const [subCategoryData, setSubCategoryData] = useState({
     name: "",
     image: "",
     category: []
   })
   const allCategory = useSelector(state => state.product.allCategory)
+  const [selectCategory, setSelectCategory] = useState("")
   const [isloading, setIsLoading] = useState(false)
   const handleChange = async (e) => {
     const { name, value } = e.target
@@ -61,17 +63,18 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
       setIsLoading(true)
       const response = await Axios({
         ...SummaryApi.addSubCategory,
-        data : subCategoryData
+        data: subCategoryData
       })
 
-      const { data : responseData } = response
+      const { data: responseData } = response
 
       if (responseData.success) {
         toast.success(responseData.message)
         if (close) {
           close()
-          fetchData()
+          // fetchData()
         }
+        setSelectCategory("")
       }
 
     } catch (error) {
@@ -134,12 +137,18 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
                 {
                   subCategoryData.category.map((cat, index) => {
                     return (
-                      <p key={cat._id + "selectedValue"} className='bg-white shadow-md px-1 m-1 flex items-center gap-1'>
+                      // <p key={cat._id + "selectedValue"} className='bg-white shadow-md px-1 m-1 flex items-center gap-1'>
+                      //   {cat.name}
+                      //   <div className='text-neutral-800 cursor-pointer hover:text-red-600' onClick={() => handleRemoveCategorySelected(cat._id)}>
+                      //     <IoClose size={20} />
+                      //   </div>
+                      // </p>
+                      <div key={cat._id + "selectedValue"} className='bg-white shadow-md px-1 m-1 flex items-center gap-1'>
                         {cat.name}
                         <div className='text-neutral-800 cursor-pointer hover:text-red-600' onClick={() => handleRemoveCategorySelected(cat._id)}>
                           <IoClose size={20} />
                         </div>
-                      </p>
+                      </div>
                     )
                   })
                 }
@@ -148,6 +157,7 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
               {/* select category */}
               <select
                 className='w-full p-2 bg-transparent outline-none border rounded border-gray-300'
+                value={selectCategory}
                 onChange={(e) => {
                   const value = e.target.value
                   const categoryDetails = allCategory.find(el => el._id == value)
@@ -158,9 +168,10 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
                       category: [...preve.category, categoryDetails]
                     }
                   })
+                  setSelectCategory("")
                 }}
               >
-                <option value={""} disabled selected>Select Category</option>
+                <option value={""}>Select Category</option>
                 {
                   allCategory.map((category, index) => {
                     return (
@@ -174,11 +185,17 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
             </div>
           </div>
 
-          <button className={`
-          ${subCategoryData.name && subCategoryData.image && subCategoryData.category[0] ? "bg-[#ffbf00] hover:bg-[#ffc929]" : "bg-gray-300"}
-          py-2 font-semibold 
-          `}>
-            Submit 
+          <button
+            disabled={!(
+              subCategoryData.name &&
+              subCategoryData.image &&
+              subCategoryData.category[0]
+            )}
+            className={`
+              ${subCategoryData.name && subCategoryData.image && subCategoryData.category[0] ? "bg-[#ffbf00] hover:bg-[#ffc929]" : "bg-gray-300"}
+              py-2 font-semibold 
+            `}>
+            Submit
           </button>
         </form>
       </div>

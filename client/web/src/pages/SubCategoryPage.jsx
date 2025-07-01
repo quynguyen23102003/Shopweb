@@ -13,6 +13,7 @@ import { MdDelete } from "react-icons/md";
 import EditSubCategory from '../components/EditSubCategory'
 import toast from 'react-hot-toast'
 import ConfirmBox from '../components/ConfirmBox'
+import { useSelector } from 'react-redux'
 
 const SubCategoryPage = () => {
   const [openAddSubCategory, setOpenSubCategory] = useState(false)
@@ -25,46 +26,51 @@ const SubCategoryPage = () => {
     _id: ""
   })
   const [deleteSubCategory, setDeleteSubCategory] = useState({
-    _id : ""
+    _id: ""
   })
   const [openConfirmBoxDelete, setOpenConfirmBoxDelete] = useState(false)
-
-  const fetchSubCategory = async () => {
-    try {
-      setLoading(true)
-      const response = await Axios({
-        ...SummaryApi.getSubCategory,
-      })
-      const { data: responseData } = response
-
-      if (responseData.success) {
-        setData(responseData.data)
-      }
-    } catch (error) {
-      AxiosToastError(error)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const allSubCategory = useSelector(state => state.product.allSubCategory)
 
   useEffect(() => {
-    fetchSubCategory()
-  }, [])
+    setData(allSubCategory)
+  }, [allSubCategory]) 
+
+  // const fetchSubCategory = async () => {
+  //   try {
+  //     setLoading(true)
+  //     const response = await Axios({
+  //       ...SummaryApi.getSubCategory,
+  //     })
+  //     const { data: responseData } = response
+
+  //     if (responseData.success) {
+  //       setData(responseData.data)
+  //     }
+  //   } catch (error) {
+  //     AxiosToastError(error)
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   fetchSubCategory()
+  // }, [])
 
   const handleDeteleSubCategory = async () => {
     try {
       const response = await Axios({
         ...SummaryApi.deleteSubCategory,
-        data : deleteSubCategory
+        data: deleteSubCategory
       })
 
-      const { data : responseData } = response 
+      const { data: responseData } = response
 
       if (responseData.success) {
         toast.success(responseData.message)
-        fetchSubCategory()
+        // fetchSubCategory()
         setOpenConfirmBoxDelete(false)
-        setDeleteSubCategory({_id : ""})
+        setDeleteSubCategory({ _id: "" })
       }
     } catch (error) {
       AxiosToastError(error)
@@ -119,10 +125,10 @@ const SubCategoryPage = () => {
               <HiPencil size={20} />
             </button>
             <button className='p-2 bg-red-100 rounded-full text-red-500 hover:text-red-600'
-            onClick={() => {
-              setOpenConfirmBoxDelete(true)
-              setEditData(row.original)
-            }}>
+              onClick={() => {
+                setOpenConfirmBoxDelete(true)
+                setDeleteSubCategory(row.original)
+              }}>
               <MdDelete size={20} />
             </button>
           </div>
@@ -138,40 +144,25 @@ const SubCategoryPage = () => {
         <button onClick={() => setOpenSubCategory(true)} className='text-sm border border-[#ffbf00] hover:bg-[#ffbf00] px-3 py-1 rounded'>Add Sub Category</button>
       </div>
       {
-        !data[0] && !loading && (
+        !data[0] && !loading ? (
           <NoData />
+        ) : (
+          <div className='overflow-auto w-full max-w-[95vw]'>
+            <DisplayTable
+              data={data}
+              column={column}
+            />
+          </div>
         )
       }
-
-      {/* <div className='p-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2'>
-        {
-          data.map((subCategory, index) => {
-            return (
-              <div key={index} className='w-32 h-56 rounded shadow-md'>
-                <img 
-                src={subCategory.image}
-                alt={subCategory.name}
-                className='w-full object-scale-down'
-                />
-              </div>
-            )
-          })
-        }
-      </div> */}
-
-      <div className='overflow-auto w-full max-w-[95vw]'>
-        <DisplayTable
-          data={data}
-          column={column}
-        />
-      </div>
 
       {
         loading && (<Loading />)
       }
 
       {
-        openAddSubCategory && <UploadSubCategoryModel close={() => setOpenSubCategory(false)} fetchData={fetchSubCategory} />
+        // openAddSubCategory && <UploadSubCategoryModel close={() => setOpenSubCategory(false)} fetchData={fetchSubCategory} />
+        openAddSubCategory && <UploadSubCategoryModel close={() => setOpenSubCategory(false)} />
       }
 
       {
@@ -179,7 +170,8 @@ const SubCategoryPage = () => {
       }
 
       {
-        openEdit && <EditSubCategory data={editData} close={() => setOpenEdit(false)} fetchData={fetchSubCategory}/>
+        // openEdit && <EditSubCategory data={editData} close={() => setOpenEdit(false)} fetchData={fetchSubCategory} />
+        openEdit && <EditSubCategory data={editData} close={() => setOpenEdit(false)}/>
       }
 
       {

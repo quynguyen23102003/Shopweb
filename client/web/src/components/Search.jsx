@@ -32,7 +32,7 @@ const Search = () => {
                         </Link>
                     ) : (
                         <button className='flex justify-center items-center h-full p-3 group-focus-within:text-[#ffbf00]'>
-                        <IoSearch size={22} />
+                            <IoSearch size={22} />
                         </button>
                     )
                 }

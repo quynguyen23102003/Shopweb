@@ -78,6 +78,35 @@ const SummaryApi = {
     deleteSubCategory : {
         url : 'api/subCategory/delete-subCategory',
         method : 'delete'
+    },
+    // Product
+    addProduct : {
+        url : 'api/product/add-product',
+        method : 'post'
+    },
+    getProduct : {
+        url : 'api/product/get-product',
+        method : 'post'
+    },
+    getProductByCategory : {
+        url : 'api/product/get-product-by-category',
+        method : 'post'
+    },
+    getProductByCategoryAndSubCategory : {
+        url : 'api/product/get-product-by-category-and-subCategory',
+        method : 'post'
+    },
+    getProductDetails : {
+        url : 'api/product/get-product-details',
+        method : 'post'
+    },
+    updateProductDetails : {
+        url  : 'api/product/update-product-details',
+        method : 'put'
+    },
+    deleteProduct : {
+        url : 'api/product/delete-product',
+        method : 'delete'
     }
 }
 

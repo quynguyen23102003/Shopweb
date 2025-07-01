@@ -115,10 +115,15 @@ const UploadCategoryModel = ({ close }) => {
                         </div>
                     </div>
 
-                    <button className={`
-                    ${data.name && data.image ? "bg-[#ffbf00] hover:bg-[#ffc929]" : "bg-gray-300"}
-                    py-2 font-semibold 
-                    `}>
+                    <button
+                        disabled={!(
+                            data.name &&
+                            data.image
+                        )}
+                        className={`
+                            ${data.name && data.image ? "bg-[#ffbf00] hover:bg-[#ffc929]" : "bg-gray-300"}
+                            py-2 font-semibold 
+                        `}>
                         Add Category
                     </button>
                 </form>

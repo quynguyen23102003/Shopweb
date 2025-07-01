@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Loading = () => {
+const Loading = React.memo(() => {
     return (
         <div className='flex justify-center items-center p-8'>
             <div role="status">
@@ -12,6 +12,6 @@ const Loading = () => {
             </div>
         </div>
     )
-}
+})
 
 export default Loading

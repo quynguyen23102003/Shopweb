@@ -63,7 +63,7 @@ const CategoryPage = () => {
 
       if (responseData.success) {
         toast.success(responseData.message)
-        fetchCategory()
+        // fetchCategory()
         setOpenConfirmBoxDelete(false)
       }
 

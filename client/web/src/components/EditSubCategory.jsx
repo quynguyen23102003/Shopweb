@@ -7,7 +7,8 @@ import Axios from '../utils/Axios';
 import SummaryApi from '../common/SunmaryApi';
 import toast from 'react-hot-toast';
 
-const EditSubCategory = ({ close, fetchData, data }) => {
+// const EditSubCategory = ({ close, fetchData, data }) => {
+const EditSubCategory = ({ close, data }) => {
     const [subCategoryData, setSubCategoryData] = useState({
         _id : data._id,
         name: data.name,
@@ -71,7 +72,7 @@ const EditSubCategory = ({ close, fetchData, data }) => {
                 toast.success(responseData.message)
                 if (close) {
                     close()
-                    fetchData()
+                    // fetchData()
                 }
             }
 
