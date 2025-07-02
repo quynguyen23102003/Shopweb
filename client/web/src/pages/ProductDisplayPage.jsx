@@ -50,11 +50,12 @@ const ProductDisplayPage = () => {
   }, [params])
 
   const handleScrollRight = () => {
-    imageContainer.current.scrollLeft += 100
+    imageContainer.current.scrollLeft += 50
+    
   }
 
   const handleScrollLeft = () => {
-    imageContainer.current.scrollLeft -= 100
+    imageContainer.current.scrollLeft -= 50
   }
 
   return (
@@ -95,14 +96,14 @@ const ProductDisplayPage = () => {
                   })
                 }
               </div>
-              <div className='w-full h-full -ml-3 absolute flex justify-between items-center'>
-                <button onClick={handleScrollRight} className='bg-white p-1 rounded-full shadow-lg relative z-10'>
+              {/* <div className='w-full h-full -ml-3 absolute flex justify-between items-center'>
+                <button onClick={handleScrollLeft} className='bg-white p-1 rounded-full shadow-lg relative z-10'>
                   <FaAngleLeft />
                 </button>
                 <button onClick={handleScrollRight} className='bg-white p-1 rounded-full shadow-lg relative z-10'>
                   <FaAngleRight />
                 </button>
-              </div>
+              </div> */}
             </div>
             <div>
             </div>

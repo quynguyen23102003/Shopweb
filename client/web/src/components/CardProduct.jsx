@@ -6,12 +6,15 @@ import { priceWithDiscount } from '../utils/PriceWithDiscount'
 
 const CardProduct = ({ data }) => {
     const url = `/product/${valideURLConvert(data.name)}-${data._id}`
+    const imageSrc = Array.isArray(data?.image) && data.image.length > 0
+        ? data.image[0]
+        : "https://via.placeholder.com/150";
     return (
         <Link to={url} className='border py-2 border-gray-300 lg:p-4 grid gap-1 lg:gap-3 min-w-36 lg:min-w-52 rounded bg-white'>
             <div className='min-h-20 max-h-24 w-full lg:max-h-32 rounded overflow-hidden'>
                 <img
-                    src={data.image[0]}
-                    alt={data.image[0]}
+                    src={imageSrc}
+                    alt={imageSrc || "product"}
                     className='w-full h-full object-scale-down lg:scale-125'
                 />
             </div>
