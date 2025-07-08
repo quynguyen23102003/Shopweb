@@ -11,6 +11,7 @@ import image2 from '../assets/Best_Prices_Offers.png'
 import image3 from '../assets/Wide_Assortment.png'
 import { priceWithDiscount } from '../utils/PriceWithDiscount'
 import Loading from '../components/Loading'
+import AddToCartButton from '../components/AddToCartButton'
 
 const ProductDisplayPage = () => {
   const params = useParams()
@@ -107,7 +108,7 @@ const ProductDisplayPage = () => {
             </div>
             <div>
             </div>
-            <div className='my-4 grid gap-3'>
+            <div className='my-4 lg:grid gap-3 hidden'>
               <div>
                 <p className='font-semibold'>Description</p>
                 <div className='text-base'>{data.description}</div>
@@ -119,7 +120,7 @@ const ProductDisplayPage = () => {
               {
                 data?.more_details && Object.keys(data?.more_details).map((element, index) => {
                   return (
-                    <div>
+                    <div key={index}>
                       <p className='font-semibold'>{element}</p>
                       <div className='text-base'>{data?.more_details[element]}</div>
                     </div>
@@ -155,9 +156,12 @@ const ProductDisplayPage = () => {
               data.stock === 0 ? (
                 <p className='text-lg text-red-500 my-2'>Out of Stock</p>
               ) : (
-                <button className='my-4 px-4 py-1 bg-green-600 hover:bg-green-700 text-white rounded'>
-                  Add
-                </button>
+                // <button className='my-4 px-4 py-1 bg-green-600 hover:bg-green-700 text-white rounded'>
+                //   Add
+                // </button>
+                <div className='my-4'>
+                  <AddToCartButton data={data}/>
+                </div>
               )
             }
 
@@ -196,6 +200,28 @@ const ProductDisplayPage = () => {
                   <p>Choose from 5000+ products across food personal care, household & other categories.</p>
                 </div>
               </div>
+            </div>
+
+            {/**only mobile */}
+            <div className='my-4 grid gap-3 lg:hidden'>
+              <div>
+                <p className='font-semibold'>Description</p>
+                <div className='text-base'>{data.description}</div>
+              </div>
+              <div>
+                <p className='font-semibold'>Unit</p>
+                <div className='text-base'>{data.unit}</div>
+              </div>
+              {
+                data?.more_details && Object.keys(data?.more_details).map((element, index) => {
+                  return (
+                    <div key={index}>
+                      <p className='font-semibold'>{element}</p>
+                      <div className='text-base'>{data?.more_details[element]}</div>
+                    </div>
+                  )
+                })
+              }
             </div>
           </div>
         </section>

@@ -1,14 +1,22 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { DisplayPriceInVND } from '../utils/DisplayPriceInVND'
 import { valideURLConvert } from '../utils/valideURLConvert'
 import { Link } from 'react-router-dom'
 import { priceWithDiscount } from '../utils/PriceWithDiscount'
+import Axios from '../utils/Axios'
+import SummaryApi from '../common/SunmaryApi'
+import AxiosToastError from '../utils/AxiosToastError'
+import toast from 'react-hot-toast'
+import { useGlobalContext } from '../provider/Globalprovider'
+import AddToCartButton from './AddToCartButton'
 
 const CardProduct = ({ data }) => {
     const url = `/product/${valideURLConvert(data.name)}-${data._id}`
+
     const imageSrc = Array.isArray(data?.image) && data.image.length > 0
         ? data.image[0]
-        : "https://via.placeholder.com/150";
+        : "https://via.placeholder.com/150"
+
     return (
         <Link to={url} className='border py-2 border-gray-300 lg:p-4 grid gap-1 lg:gap-3 min-w-36 lg:min-w-52 rounded bg-white'>
             <div className='min-h-20 max-h-24 w-full lg:max-h-32 rounded overflow-hidden'>
@@ -46,9 +54,7 @@ const CardProduct = ({ data }) => {
                         data.stock == 0 ? (
                             <p className='text-red-500 text-sm text-center'>Out of stock</p>
                         ) : (
-                            <button className='bg-green-600 hover:bg-green-700 text-white px-2 lg:px-4 py-1 rounded'>
-                                Add
-                            </button>
+                            <AddToCartButton data={data}/>
                         )
                     }
                 </div>

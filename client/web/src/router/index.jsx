@@ -20,90 +20,95 @@ import AdminPermission from "../layouts/AdminPermission";
 import Product from "../pages/Product";
 import ProductListPage from "../pages/ProductListPage";
 import ProductDisplayPage from "../pages/ProductDisplayPage";
+import CartMobile from "../pages/CartMobile";
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <App/>,
-        children : [
+        element: <App />,
+        children: [
             {
-                path : "",
-                element : <Home/>
+                path: "",
+                element: <Home />
             },
             {
-                path : "search",
-                element : <SearchPage/>
+                path: "search",
+                element: <SearchPage />
             },
             {
-                path : "login",
-                element : <Login/>
+                path: "login",
+                element: <Login />
             },
             {
-                path : "register",
-                element : <Register/>
+                path: "register",
+                element: <Register />
             },
             {
-                path : "forgot-password",
-                element : <ForgotPassword/>
+                path: "forgot-password",
+                element: <ForgotPassword />
             },
             {
-                path : "verification-opt",
-                element : <OtpVerification/>
+                path: "verification-opt",
+                element: <OtpVerification />
             },
             {
-                path : "reset-password",
-                element : <ResetPassword/>
+                path: "reset-password",
+                element: <ResetPassword />
             },
             {
-                path : "user",
-                element : <UserMenuMobile/>
+                path: "user",
+                element: <UserMenuMobile />
             },
             {
-                path : "dashboard",
-                element : <Dashboard/>,
-                children : [
+                path: "dashboard",
+                element: <Dashboard />,
+                children: [
                     {
-                        path : "profile",
-                        element : <Profile/>
+                        path: "profile",
+                        element: <Profile />
                     },
                     {
-                        path : "myorders",
-                        element : <MyOrders/>
+                        path: "myorders",
+                        element: <MyOrders />
                     },
                     {
-                        path : "address",
-                        element : <Address/>
+                        path: "address",
+                        element: <Address />
                     },
                     {
-                        path : "category",
-                        element : <AdminPermission><CategoryPage/></AdminPermission>
+                        path: "category",
+                        element: <AdminPermission><CategoryPage /></AdminPermission>
                     },
                     {
-                        path : "sub-category",
-                        element : <AdminPermission><SubCategoryPage/></AdminPermission>
+                        path: "sub-category",
+                        element: <AdminPermission><SubCategoryPage /></AdminPermission>
                     },
                     {
-                        path : "upload-product",
-                        element : <AdminPermission><UploadProduct/></AdminPermission>
-                    }, 
+                        path: "upload-product",
+                        element: <AdminPermission><UploadProduct /></AdminPermission>
+                    },
                     {
-                        path : "product",
-                        element : <AdminPermission><ProductAdmin/></AdminPermission>
+                        path: "product",
+                        element: <AdminPermission><ProductAdmin /></AdminPermission>
                     },
                 ]
             },
             {
-                path : ":category",
-                children : [
+                path: ":category",
+                children: [
                     {
-                        path : ":subCategory",
-                        element : <ProductListPage/>
+                        path: ":subCategory",
+                        element: <ProductListPage />
                     }
                 ]
             },
             {
                 path: "product/:product",
-                element : <ProductDisplayPage/>
+                element: <ProductDisplayPage />
+            },
+            {
+                path: "cart",
+                element: <CartMobile />
             }
         ]
     },

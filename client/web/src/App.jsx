@@ -6,11 +6,15 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
 import fetchUserDetails from './utils/fetchUserDetails';
 import { setUserDetails } from './store/userSlice'
-import { setAllCategory,setLoadingCategory, setAllSubCategory } from './store/productSlice';
+import { setAllCategory, setLoadingCategory, setAllSubCategory } from './store/productSlice';
 import { useDispatch } from 'react-redux';
 import Axios from './utils/Axios';
 import SummaryApi from './common/SunmaryApi';
 import AxiosToastError from './utils/AxiosToastError'
+import { handleAddItemCart } from './store/cartProductSlice';
+import GlobalProvider, { useGlobalContext } from './provider/Globalprovider';
+import { FaCartShopping } from "react-icons/fa6";
+import CartMobile from './components/CartMobile';
 
 function App() {
   const dispatch = useDispatch()
@@ -20,7 +24,7 @@ function App() {
     dispatch(setUserDetails(userData.data))
   }
 
-    const fetchCategory = async () => {
+  const fetchCategory = async () => {
     try {
       dispatch(setLoadingCategory(true))
       const response = await Axios({
@@ -43,7 +47,7 @@ function App() {
       const response = await Axios({
         ...SummaryApi.getSubCategory
       })
-      const { data : responseData } = response
+      const { data: responseData } = response
       if (responseData.success) {
         dispatch(setAllSubCategory(responseData.data))
       }
@@ -56,18 +60,20 @@ function App() {
     fetchUser()
     fetchCategory()
     fetchSubCategory()
+    // fetchCartItem()
   }, [])
-  
+
 
   return (
-    <>
-    <Header/>
-    <main className='min-h-[78vh]'>
-      <Outlet/>
-    </main>
-    <Footer/>
-    <Toaster/>
-    </>
+    <GlobalProvider>
+      <Header />
+      <main className='min-h-[78vh]'>
+        <Outlet />
+      </main>
+      <Footer />
+      <Toaster />
+      <CartMobile/>
+    </GlobalProvider>
   )
 }
 
