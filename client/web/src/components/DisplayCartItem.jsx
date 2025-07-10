@@ -1,6 +1,6 @@
 import React from 'react'
 import { IoClose } from 'react-icons/io5'
-import { Link, Links } from 'react-router-dom'
+import { Link, Links, useNavigate } from 'react-router-dom'
 import { useGlobalContext } from '../provider/Globalprovider'
 import { DisplayPriceInVND } from '../utils/DisplayPriceInVND'
 import { FaCaretRight } from "react-icons/fa6";
@@ -8,11 +8,25 @@ import { useSelector } from 'react-redux'
 import AddToCartButton from './AddToCartButton'
 import { priceWithDiscount } from '../utils/PriceWithDiscount'
 import imageEmpty from '../assets/empty_cart.webp'
+import toast from 'react-hot-toast'
 
 const DisplayCartItem = ({ close }) => {
     const { notDiscountTotalPrice, totalPrice, totalQty } = useGlobalContext()
     const cartItems = useSelector(state => state.cartItem.cart)
-    console.log("cartItems", cartItems)
+    const user = useSelector(state => state.user)
+    const navigate = useNavigate()
+
+    const redirectToCheckoutPage = () => {
+        if (user?._id) {
+            navigate("/checkout")
+            if (close) {
+                close()
+            }
+            return
+        }
+        toast("Please Login")
+    }
+
     return (
         <section className='fixed top-0 bottom-0 left-0 right-0 bg-neutral-800/60 z-50'>
             <div className='bg-white w-full max-w-sm min-h-screen max-h-screen ml-auto'>
@@ -40,7 +54,7 @@ const DisplayCartItem = ({ close }) => {
                                         cartItems[0] && (
                                             cartItems.map((item, index) => {
                                                 return (
-                                                    <div key={index} className='flex w-full gap-4'>
+                                                    <div key={item?._id+"cartItemDisplay"} className='flex w-full gap-4'>
                                                         <div className='w-16 h-16 min-w-16 min-h-16 bg-red-100 border border-gray-300 rounded'>
                                                             <img
                                                                 src={item?.productId?.image[0]}
@@ -108,7 +122,7 @@ const DisplayCartItem = ({ close }) => {
                                 <div>
                                     {DisplayPriceInVND(totalPrice)}
                                 </div>
-                                <button className='flex items-center gap-1'>
+                                <button onClick={redirectToCheckoutPage} className='flex items-center gap-1'>
                                     Proceed
                                     <span>
                                         <FaCaretRight />

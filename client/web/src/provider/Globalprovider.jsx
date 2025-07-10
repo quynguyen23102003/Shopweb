@@ -8,6 +8,7 @@ import AxiosToastError from "../utils/AxiosToastError";
 import { useState } from "react";
 import { priceWithDiscount } from "../utils/PriceWithDiscount";
 import { useNavigate } from "react-router-dom";
+import { handleAddAddress } from "../store/addressSlice";
 
 export const GlobalContext = createContext(null)
 
@@ -20,6 +21,7 @@ const GlobalProvider = ({ children }) => {
     const [notDiscountTotalPrice, setNotDiscountTotalPrice] = useState(0)
     const cartItem = useSelector(state => state.cartItem.cart)
     const navigate = useNavigate()
+    const user = useSelector(state => state.user)
 
     const fetchCartItem = async () => {
         try {
@@ -32,7 +34,10 @@ const GlobalProvider = ({ children }) => {
                 dispatch(handleAddItemCart(responseData.data))
             }
         } catch (error) {
-            AxiosToastError(error)
+            if (!user._id) {
+                return
+            } else
+                AxiosToastError(error)
         }
     }
 
@@ -40,19 +45,19 @@ const GlobalProvider = ({ children }) => {
         try {
             const response = await Axios({
                 ...SummaryApi.updateQty,
-                data : {
+                data: {
                     _id: id,
                     qty: qty
                 }
             })
-            const { data : responseData } = response
+            const { data: responseData } = response
 
             if (responseData.success) {
                 // toast.success(responseData.message)
                 fetchCartItem()
                 return responseData
             }
-            
+
         } catch (error) {
             AxiosToastError(error)
             return error
@@ -80,34 +85,61 @@ const GlobalProvider = ({ children }) => {
         }
     }
 
+    const fetchAddress = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.getAddress
+            })
+
+            const { data: responseData } = response
+
+            if (responseData.success) {
+                dispatch(handleAddAddress(responseData.data))
+            }
+        } catch (error) {
+            if (!user._id) {
+                return
+            } else
+                AxiosToastError(error)
+        }
+    }
+
+    useEffect(() => {
+        const qty = cartItem.reduce((preve, curr) => {
+            return preve + curr.quantity
+        }, 0)
+        setTotalQty(qty)
+
+        const tPrice = cartItem.reduce((preve, curr) => {
+            const priceAfterDiscount = priceWithDiscount(curr?.productId?.price, curr?.productId?.discount)
+            return preve + (priceAfterDiscount * curr.quantity)
+        }, 0)
+        setTotalPrice(tPrice)
+
+        const notDiscountPrice = cartItem.reduce((preve, curr) => {
+            return preve + (curr?.productId?.price * curr.quantity)
+        }, 0)
+        setNotDiscountTotalPrice(notDiscountPrice)
+
+    }, [cartItem])
+
+    const handleLogout = () => {
+        localStorage.clear()
+        dispatch(handleAddItemCart([]))
+    }
+
     useEffect(() => {
         fetchCartItem()
-    }, [])
-
-    useEffect(() => {
-            const qty = cartItem.reduce((preve, curr) => {
-                return preve + curr.quantity
-            }, 0)
-            setTotalQty(qty)
-    
-            const tPrice = cartItem.reduce((preve, curr) => {
-                const priceAfterDiscount = priceWithDiscount(curr?.productId?.price, curr?.productId?.discount)
-                return preve + (priceAfterDiscount * curr.quantity) 
-            }, 0)
-            setTotalPrice(tPrice)
-
-            const notDiscountPrice = cartItem.reduce((preve, curr) => {
-                return preve + (curr?.productId?.price * curr.quantity) 
-            }, 0) 
-            setNotDiscountTotalPrice(notDiscountPrice)
-
-        }, [cartItem])
+        handleLogout()
+        fetchAddress()
+    }, [user])
 
     return (
         <GlobalContext.Provider value={{
             fetchCartItem,
             updateCartItem,
             deleteCartItem,
+            fetchAddress,
             totalPrice,
             totalQty,
             notDiscountTotalPrice

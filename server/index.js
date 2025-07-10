@@ -12,6 +12,7 @@ import uploadRouter from './routes/upload.route.js'
 import subCategoryRouter from './routes/subCategory.route.js'
 import productRouter from './routes/product.route.js'
 import cartRouter from './routes/cart.route.js'
+import addressRouter from './routes/address.route.js'
 
 const app = express()
 app.use(cors({
@@ -40,6 +41,7 @@ const PORT = 3000 || process.env.PORT
     app.use('/api/subCategory', subCategoryRouter)
     app.use('/api/product', productRouter)
     app.use('/api/cart', cartRouter)
+    app.use('/api/address', addressRouter)
 
     connectDB().then(() => {
         app.listen(PORT, () => {

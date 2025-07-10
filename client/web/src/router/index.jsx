@@ -21,6 +21,7 @@ import Product from "../pages/Product";
 import ProductListPage from "../pages/ProductListPage";
 import ProductDisplayPage from "../pages/ProductDisplayPage";
 import CartMobile from "../pages/CartMobile";
+import CheckOutPage from "../pages/CheckOutPage";
 
 const router = createBrowserRouter([
     {
@@ -109,7 +110,11 @@ const router = createBrowserRouter([
             {
                 path: "cart",
                 element: <CartMobile />
-            }
+            },
+            {
+                path: "checkout",
+                element: <CheckOutPage />
+            },
         ]
     },
 ]);

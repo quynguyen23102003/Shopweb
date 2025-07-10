@@ -1,8 +1,8 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import './App.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
 import fetchUserDetails from './utils/fetchUserDetails';
 import { setUserDetails } from './store/userSlice'
@@ -11,13 +11,12 @@ import { useDispatch } from 'react-redux';
 import Axios from './utils/Axios';
 import SummaryApi from './common/SunmaryApi';
 import AxiosToastError from './utils/AxiosToastError'
-import { handleAddItemCart } from './store/cartProductSlice';
-import GlobalProvider, { useGlobalContext } from './provider/Globalprovider';
-import { FaCartShopping } from "react-icons/fa6";
+import GlobalProvider from './provider/Globalprovider';
 import CartMobile from './components/CartMobile';
 
 function App() {
   const dispatch = useDispatch()
+  const location = useLocation()
 
   const fetchUser = async () => {
     const userData = await fetchUserDetails()
@@ -72,7 +71,11 @@ function App() {
       </main>
       <Footer />
       <Toaster />
-      <CartMobile/>
+      {
+        location.pathname !== '/checkout' && (
+          <CartMobile />
+        )
+      }
     </GlobalProvider>
   )
 }

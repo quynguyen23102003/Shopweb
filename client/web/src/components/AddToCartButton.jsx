@@ -16,6 +16,7 @@ const AddToCartButton = ({ data }) => {
     const [isAvailabelCart, setIsAvailabelCart] = useState(false)
     const [qty, setQty] = useState(0)
     const [cartItemDetails, setCartItemDetails] = useState()
+    const user = useSelector(state => state.user)
 
     const handleAddToCart = async (e) => {
         e.preventDefault()
@@ -40,6 +41,9 @@ const AddToCartButton = ({ data }) => {
             }
 
         } catch (error) {
+            if (!user._id) {
+                toast.error("You are not logged in!")
+            } else
             AxiosToastError(error)
         } finally {
             setLoading(false)

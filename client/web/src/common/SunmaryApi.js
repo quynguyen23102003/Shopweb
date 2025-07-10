@@ -128,6 +128,23 @@ const SummaryApi = {
     deleteCartItem: {
         url: 'api/cart/delete',
         method: 'delete'
+    },
+    // address
+    addAddress: {
+        url: 'api/address/create',
+        method: 'post'
+    },
+    getAddress: {
+        url: 'api/address/get',
+        method: 'get'
+    },
+    updateAddress: {
+        url: 'api/address/update',
+        method: 'put'
+    },
+    deleteAddress: {
+        url: 'api/address/delete',
+        method: 'delete'
     }
 }
 
