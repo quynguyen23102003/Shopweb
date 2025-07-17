@@ -3,12 +3,86 @@ import { DisplayPriceInVND } from '../utils/DisplayPriceInVND'
 import { useGlobalContext } from '../provider/Globalprovider'
 import AddAddress from '../components/AddAddress'
 import { useSelector } from 'react-redux'
+import AxiosToastError from '../utils/AxiosToastError'
+import Axios from '../utils/Axios'
+import SummaryApi from '../common/SunmaryApi'
+import toast from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
+import { loadStripe } from '@stripe/stripe-js'
 
 const CheckOutPage = () => {
-    const { notDiscountTotalPrice, totalPrice, totalQty } = useGlobalContext()
+    const { notDiscountTotalPrice, totalPrice, totalQty, fetchCartItem, fetchOrder } = useGlobalContext()
     const [openAddAddress, setOpenAddAddress] = useState(false)
     const addressList = useSelector(state => state.address.addressList)
     const [selectAddress, setSelectAddress] = useState(0)
+    const cartItemsList = useSelector(state => state.cartItem.cart)
+    const navigate = useNavigate()
+
+    const handleCashOnDelivery = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.cashOnDeliveryOrder,
+                data: {
+                    list_items: cartItemsList,
+                    addressId: addressList[selectAddress]?._id,
+                    totalAmt: totalPrice,
+                    subTotalAmt: totalPrice
+                }
+            })
+
+            const { data: responseData } = response
+
+            if (responseData.success) {
+                toast.success(responseData.message)
+                if (fetchCartItem) {
+                    fetchCartItem()
+                }
+                if (fetchOrder) {
+                    fetchOrder()
+                }
+                navigate('/success', {
+                    state: {
+                        text: "Order"
+                    }
+                })
+            }
+
+        } catch (error) {
+            AxiosToastError(error)
+        }
+    }
+
+    const handleOnlinePayment = async () => {
+        try {
+
+            const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY
+            const stripePromise = await loadStripe(stripePublicKey)
+
+            const response = await Axios({
+                ...SummaryApi.payment_url,
+                data: {
+                    list_items: cartItemsList,
+                    addressId: addressList[selectAddress]?._id,
+                    totalAmt: totalPrice,
+                    subTotalAmt: totalPrice
+                }
+            })
+
+            const { data: responseData } = response
+
+            stripePromise.redirectToCheckout({ sessionId: responseData.id })
+
+            if (fetchCartItem) {
+                fetchCartItem()
+            }
+            if (fetchOrder) {
+                fetchOrder()
+            }
+
+        } catch (error) {
+            AxiosToastError(error)
+        }
+    }
 
     return (
         <section className='bg-blue-50'>
@@ -20,10 +94,10 @@ const CheckOutPage = () => {
                         {
                             addressList.map((address, index) => {
                                 return (
-                                    <label htmlFor={"address"+index} key={index + "Address"} className={!address.status && "hidden"}>
+                                    <label htmlFor={"address" + index} key={index + "Address"} className={!address.status ? "hidden" : "block"}>
                                         <div className='border rounded border-gray-300 p-3 flex gap-3 hover:bg-blue-50'>
                                             <div>
-                                                <input id={"address"+index} type="radio" name='address' value={index} onChange={(e) => setSelectAddress(e.target.value)}/>
+                                                <input id={"address" + index} type="radio" name='address' value={index} onChange={(e) => setSelectAddress(e.target.value)} />
                                             </div>
                                             <div>
                                                 <p>{address.address_line}</p>
@@ -72,8 +146,8 @@ const CheckOutPage = () => {
                         </div>
                     </div>
                     <div className='w-full flex flex-col gap-4'>
-                        <button className='py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded'>Online Payment</button>
-                        <button className='py-2 px-4 border-2 border-green-600 font-semibold text-green-600 hover:bg-green-600 hover:text-white rounded'>Cash on Delivery</button>
+                        <button className='py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded' onClick={handleOnlinePayment}>Online Payment</button>
+                        <button className='py-2 px-4 border-2 border-green-600 font-semibold text-green-600 hover:bg-green-600 hover:text-white rounded' onClick={handleCashOnDelivery}>Cash on Delivery</button>
                     </div>
                 </div>
             </div>

@@ -9,6 +9,7 @@ import { useState } from "react";
 import { priceWithDiscount } from "../utils/PriceWithDiscount";
 import { useNavigate } from "react-router-dom";
 import { handleAddAddress } from "../store/addressSlice";
+import { setOrder } from "../store/orderSlice";
 
 export const GlobalContext = createContext(null)
 
@@ -85,25 +86,6 @@ const GlobalProvider = ({ children }) => {
         }
     }
 
-    const fetchAddress = async () => {
-        try {
-            const response = await Axios({
-                ...SummaryApi.getAddress
-            })
-
-            const { data: responseData } = response
-
-            if (responseData.success) {
-                dispatch(handleAddAddress(responseData.data))
-            }
-        } catch (error) {
-            if (!user._id) {
-                return
-            } else
-                AxiosToastError(error)
-        }
-    }
-
     useEffect(() => {
         const qty = cartItem.reduce((preve, curr) => {
             return preve + curr.quantity
@@ -127,11 +109,50 @@ const GlobalProvider = ({ children }) => {
         localStorage.clear()
         dispatch(handleAddItemCart([]))
     }
+    
+    const fetchAddress = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.getAddress
+            })
+
+            const { data: responseData } = response
+
+            if (responseData.success) {
+                dispatch(handleAddAddress(responseData.data))
+            }
+        } catch (error) {
+            if (!user._id) {
+                return
+            } else
+                AxiosToastError(error)
+        }
+    }
+
+    const fetchOrder = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.getOrderItems,
+            })
+
+            const { data : responseData } = response
+
+            if (responseData.success) {
+                dispatch(setOrder(responseData.data))
+            }
+        } catch (error) {
+            if (!user._id) {
+                return
+            } else
+                AxiosToastError(error)
+        }
+    }
 
     useEffect(() => {
         fetchCartItem()
         handleLogout()
         fetchAddress()
+        fetchOrder()
     }, [user])
 
     return (
@@ -142,7 +163,8 @@ const GlobalProvider = ({ children }) => {
             fetchAddress,
             totalPrice,
             totalQty,
-            notDiscountTotalPrice
+            notDiscountTotalPrice,
+            fetchOrder
         }}>
             {children}
         </GlobalContext.Provider>

@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
-const oderSchema = new mongoose.Schema({
+const orderSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.ObjectId,
         ref: 'User'
     },
-    oderId: {
+    orderId: {
         type: String,
-        default: [true, 'Provide oderId'],
+        required: [true, "Provide orderId"],
         unique: true
     },
     productId: {
@@ -19,7 +19,7 @@ const oderSchema = new mongoose.Schema({
         image: Array
     },
     paymentId: {
-        Type: String,
+        type: String,
         default: ''
     },
     payment_status: {
@@ -38,7 +38,7 @@ const oderSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    totalAtm: {
+    totalAmt: {
         type: Number,
         default: 0
     },
@@ -58,6 +58,6 @@ const oderSchema = new mongoose.Schema({
     timestamps: true
 })
 
-const oderModel = mongoose.model('oder', oderSchema)
+const orderModel = mongoose.model('order', orderSchema)
 
-export default oderModel 
+export default orderModel 
